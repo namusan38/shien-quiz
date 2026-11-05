@@ -1,0 +1,174 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>紫煙クイズ</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@600;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
+<style>
+/* Layout: 一列のカード。葉巻のバンド(帯)を見出しに使い、ヒュミドールの杉材の色で包む。単一のダークテーマ */
+:root{
+  --bg:#1d1612;          /* ヒュミドール内側 */
+  --panel:#2a201a;       /* 杉材の板 */
+  --line:#4a3a2e;
+  --fg:#efe4d4;          /* 灰色がかった紙 */
+  --muted:#b3a08b;
+  --band:#b8892f;        /* 葉巻バンドの金 */
+  --band-ink:#2a1a0c;
+  --ember:#d8643a;       /* 火口 */
+  --ok:#7fae6e;
+  --ng:#d8643a;
+  --display:"Shippori Mincho B1","Hiragino Mincho ProN","Yu Mincho",serif;
+  --body:"Zen Kaku Gothic New","Hiragino Sans","Yu Gothic",system-ui,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.7;
+  background-image:repeating-linear-gradient(90deg,transparent 0 7px,rgba(255,220,180,.018) 7px 8px);}
+.wrap{max-width:560px;margin:0 auto;padding-block:20px 40px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:flex;flex-direction:column;gap:18px}
+.band{position:relative;background:linear-gradient(180deg,#d3a548,var(--band) 45%,#94681f);color:var(--band-ink);
+  border-radius:4px;padding:14px 18px;text-align:center;box-shadow:inset 0 0 0 2px rgba(42,26,12,.35),inset 0 0 0 5px rgba(255,236,190,.25)}
+.band h1{margin:0;font-family:var(--display);font-weight:800;font-size:clamp(28px,8vw,40px);letter-spacing:.12em;line-height:1.2}
+.band .sub{font-size:11px;letter-spacing:.3em;font-weight:700;opacity:.8}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:20px;display:flex;flex-direction:column;gap:16px}
+.intro p{margin:0;color:var(--muted)}
+.intro h2,.result h2{margin:0;font-family:var(--display);font-size:22px;text-wrap:balance}
+.meta{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.tag{font-size:11px;font-weight:700;letter-spacing:.12em;padding:2px 10px;border-radius:999px;border:1px solid var(--band);color:var(--band)}
+.ash{height:6px;border-radius:3px;background:#3a2d24;overflow:hidden;position:relative}
+.ash i{position:absolute;inset:0 auto 0 0;background:linear-gradient(90deg,#8d7b6c,#c9bcae);transition:width .3s}
+.ash i::after{content:"";position:absolute;right:0;top:0;bottom:0;width:6px;background:var(--ember);box-shadow:0 0 8px var(--ember)}
+.q{font-family:var(--display);font-size:20px;font-weight:600;line-height:1.6;margin:0;text-wrap:pretty}
+.choices{display:grid;gap:10px}
+.choices.ox{grid-template-columns:1fr 1fr}
+button{font:inherit;cursor:pointer}
+.ch{text-align:left;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:12px 14px;min-height:48px;transition:border-color .15s,background .15s}
+.ox .ch{text-align:center;font-family:var(--display);font-size:34px;line-height:1;padding:16px}
+.ch:hover:not(:disabled){border-color:var(--band)}
+.ch:focus-visible,.btn:focus-visible{outline:2px solid var(--band);outline-offset:2px}
+.ch:disabled{cursor:default}
+.ch.right{border-color:var(--ok);background:rgba(127,174,110,.14)}
+.ch.wrong{border-color:var(--ng);background:rgba(216,100,58,.14)}
+.ch.dim{opacity:.45}
+.fb{border-top:1px dashed var(--line);padding-top:14px;display:flex;flex-direction:column;gap:6px}
+.fb strong{font-size:15px}
+.fb.ok strong{color:var(--ok)} .fb.ng strong{color:var(--ng)}
+.fb p{margin:0;color:var(--muted);font-size:14px}
+.btn{background:var(--band);color:var(--band-ink);border:0;border-radius:6px;padding:14px;font-weight:700;letter-spacing:.08em;min-height:48px}
+.btn.ghost{background:transparent;color:var(--fg);border:1px solid var(--line)}
+.row{display:flex;gap:10px;flex-wrap:wrap}.row .btn{flex:1 1 140px}
+.rank{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 0}
+.rank .score{font-family:var(--display);font-size:56px;font-weight:800;line-height:1;font-variant-numeric:tabular-nums}
+.rank .score small{font-size:22px;color:var(--muted)}
+.rank .name{font-family:var(--display);font-size:22px;color:var(--band)}
+.rank .spec{font-size:12px;color:var(--muted);letter-spacing:.08em}
+.cigar{width:100%;max-width:320px;height:26px;margin:4px 0}
+.review{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.review li{display:grid;grid-template-columns:22px 1fr;gap:8px;font-size:14px;padding:8px 0;border-bottom:1px solid var(--line)}
+.review li span:last-child{min-width:0}
+.review .mk{font-weight:700}
+.note{font-size:12px;color:var(--muted);text-align:center;margin:0}
+.best{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+  <header class="band"><div class="sub">FOR AFICIONADOS</div><h1>紫煙クイズ</h1><div class="sub">CIGAR · PIPE · KISERU</div></header>
+  <main id="app" class="card"></main>
+  <p class="note">喫煙は20歳になってから。クイズは嗜好品の文化と知識を楽しむためのものです。</p>
+</div>
+
+<script>
+const POOL=[
+ {t:"4",q:"葉巻の太さを表す「リングゲージ」。1ゲージは何インチ?",c:["1/32インチ","1/64インチ","1/100インチ","1/16インチ"],a:1,e:"リングゲージ50なら直径50/64インチ(約2cm)。ロブストはこのあたりが定番です。"},
+ {t:"4",q:"キューバで最高級の葉巻用タバコ産地として知られる地域は?",c:["オルギン","ヤグアハイ","ブエルタ・アバホ","バラデロ"],a:2,e:"ピナール・デル・リオ州のブエルタ・アバホ。ハバナ葉巻の名産地です。"},
+ {t:"ox",q:"「コイーバ」はもともと外交用の贈答品として作られ、のちに一般発売された。",a:0,e:"国家の贈答用として生まれ、1982年に一般向けに発売されたと伝えられています。"},
+ {t:"ox",q:"「モンテクリスト」の名は、工場の朗読者が読み聞かせた小説『モンテ・クリスト伯』に由来する。",a:0,e:"巻き手に人気だった作品から名付けられたと言われます。"},
+ {t:"4",q:"葉巻工場で、作業する巻き手に新聞や小説を読み聞かせる人を何と呼ぶ?",c:["トルセドール","レクトール","カタドール","ベゲーロ"],a:1,e:"レクトール(朗読者)。巻き手そのものはトルセドールと呼ばれます。"},
+ {t:"4",q:"葉巻の構造で、いちばん内側に詰められる葉は?",c:["ラッパー","バインダー","フィラー","キャップ"],a:2,e:"内側からフィラー、それを束ねるバインダー、外側を包むラッパーの順です。"},
+ {t:"ox",q:"ヒュミドール管理の目安として「70/70ルール」(華氏70度・湿度70%)がよく知られている。",a:0,e:"華氏70度は約21℃。好みや季節で65%前後に下げる人もいます。"},
+ {t:"ox",q:"葉巻を吸い終えるときは、灰皿で強く押しつぶして消すのがマナーとされる。",a:1,e:"灰皿に置いておけば自然に消えます。つぶすと嫌な匂いが立ちやすいので避けるのが通例です。"},
+ {t:"ox",q:"パンチカッターは、葉巻の吸い口に丸い穴を開けるタイプのカッターである。",a:0,e:"ほかにまっすぐ切るギロチン、V字に切り込むVカットがあります。"},
+ {t:"4",q:"先端が尖ったトルペードやベリコーソなど、円筒以外の形の葉巻の総称は?",c:["パレホ","フィギュラド","パナテラ","コロナ"],a:1,e:"フィギュラド。まっすぐな円筒形はパレホと呼ばれます。"},
+ {t:"ox",q:"葉巻のサイズ名「チャーチル」は、英国首相ウィンストン・チャーチルにちなむ。",a:0,e:"葉巻を愛したことで知られるチャーチルの名を冠した、長めのサイズです。"},
+ {t:"4",q:"「メシャム」パイプの主な原料の鉱物は?",c:["滑石","海泡石(セピオライト)","琥珀","大理石"],a:1,e:"ドイツ語で「海の泡」。主な産地はトルコのエスキシェヒルです。"},
+ {t:"4",q:"ブライヤーパイプの材料は、どんな植物のどの部分?",c:["オリーブの幹","桜の枝","ツツジ科の木の根こぶ","竹の節"],a:2,e:"地中海沿岸のエリカ・アルボレアの根こぶ。熱に強く割れにくいのが特長です。"},
+ {t:"ox",q:"コーンパイプの老舗「ミズーリ・メシャム」は、アメリカのミズーリ州にある。",a:0,e:"名前にメシャムとありますが、トウモロコシの芯で作るコーンパイプのメーカーです。"},
+ {t:"4",q:"キセルで、火皿のある金属部分(雁首)と吸口をつなぐ竹の管を何と呼ぶ?",c:["羅宇","煙管","根付","火皿"],a:0,e:"羅宇(らう/らお)。ラオス産の竹が使われたことが名の由来とされます。"},
+ {t:"4",q:"「ニコチン」の名の由来となった人物は?",c:["コロンブス","ジャン・ニコ","ウォルター・ローリー","ニコラ・テスラ"],a:1,e:"16世紀の駐ポルトガル・フランス大使ジャン・ニコ。タバコをフランスに紹介しました。"},
+ {t:"4",q:"イングリッシュ・ミクスチャーに欠かせない、燻して乾燥させた独特の香りの葉は?",c:["ペリク","ラタキア","バーレー","オリエント"],a:1,e:"ラタキア。もとはシリアやキプロスで作られた燻製葉です。"},
+ {t:"ox",q:"「ペリク」は、米国ルイジアナ州で樽に詰めて圧をかけ発酵させる希少な葉である。",a:0,e:"セント・ジェームズ郡の特産で、少量をブレンドに加えてスパイシーさを出します。"},
+ {t:"4",q:"バーレー種の葉は、一般にどの方法で乾燥させる?",c:["熱風乾燥(フルーキュア)","空気乾燥(エアキュア)","天日干し(サンキュア)","燻煙乾燥(ファイアキュア)"],a:1,e:"バーレーは納屋で風を通すエアキュア。バージニアは熱風のフルーキュアが主流です。"},
+ {t:"4",q:"口に含んで使う無煙タバコ「スヌース」が伝統的に親しまれている国は?",c:["スウェーデン","スペイン","トルコ","インド"],a:0,e:"スウェーデン発祥。ポーションと呼ばれる小袋入りが一般的です。"},
+ {t:"ox",q:"たばこ「ピース」のパッケージは、工業デザイナーのレイモンド・ローウィが手がけた。",a:0,e:"1952年のリデザイン。濃紺地に金の鳩のデザインは今も受け継がれています。"},
+ {t:"4",q:"日本専売公社が民営化され、日本たばこ産業(JT)が発足した年は?",c:["1972年","1985年","1993年","2001年"],a:1,e:"1985年4月。同じ年に日本電信電話公社もNTTになりました。"},
+ {t:"ox",q:"パイプの「ダンヒル」はパリで創業されたブランドである。",a:1,e:"アルフレッド・ダンヒルがロンドンで創業。マウスピースの白い点(ホワイトスポット)が目印です。"},
+ {t:"ox",q:"葉巻のラッパーで「マデューロ」は、色が淡く明るい葉を指す。",a:1,e:"マデューロは熟成で濃い茶色になった葉。淡い色はクラロ系です。"}
+];
+const RANKS=[
+ {min:10,name:"ダブルコロナ",spec:"7⅝″ × 49 ── 真のアフィシオナード"},
+ {min:8,name:"チャーチル",spec:"7″ × 47 ── 堂々たる愛好家"},
+ {min:6,name:"ロブスト",spec:"4⅞″ × 50 ── 確かな腕前"},
+ {min:4,name:"コロナ",spec:"5⅝″ × 42 ── 着実に一服"},
+ {min:0,name:"ペティコロナ",spec:"5″ × 40 ── これからの一本"}
+];
+const N=10, app=document.getElementById("app");
+let qs=[],i=0,score=0,log=[];
+const store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+function shuffle(a){a=a.slice();for(let j=a.length-1;j>0;j--){const k=Math.floor(Math.random()*(j+1));[a[j],a[k]]=[a[k],a[j]]}return a}
+function esc(s){return s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
+
+function intro(){
+  const best=store.get("kemuri-best");
+  app.className="card intro";
+  app.innerHTML=`<h2>葉巻、パイプ、キセル。<br>あなたの紫煙通ぶりを試す10問。</h2>
+  <p>全${POOL.length}問から毎回10問をランダムに出題。4択と○×が混ざります。解説つき。</p>
+  ${best?`<div class="best">自己ベスト ${best} / ${N}</div>`:""}
+  <button class="btn" id="go">火をつける</button>`;
+  document.getElementById("go").onclick=start;
+}
+function start(){qs=shuffle(POOL).slice(0,N);i=0;score=0;log=[];show()}
+function show(){
+  const q=qs[i], ox=q.t==="ox", opts=ox?["○","×"]:q.c;
+  app.className="card";
+  app.innerHTML=`<div class="meta"><span>第${i+1}問 / ${N}</span><span class="tag">${ox?"○×":"4択"}</span></div>
+  <div class="ash"><i style="width:${(i/N)*100}%"></i></div>
+  <p class="q">${esc(q.q)}</p>
+  <div class="choices ${ox?"ox":""}">${opts.map((o,k)=>`<button class="ch" data-k="${k}" aria-label="${ox?(k?"バツ":"マル"):esc(o)}">${esc(o)}</button>`).join("")}</div>
+  <div id="fb"></div>`;
+  app.querySelectorAll(".ch").forEach(b=>b.onclick=()=>answer(+b.dataset.k));
+}
+function answer(k){
+  const q=qs[i], ok=k===q.a; if(ok)score++;
+  log.push({q,ok});
+  app.querySelectorAll(".ch").forEach(b=>{const n=+b.dataset.k;b.disabled=true;
+    if(n===q.a)b.classList.add("right");else if(n===k)b.classList.add("wrong");else b.classList.add("dim")});
+  const fb=document.getElementById("fb");fb.className="fb "+(ok?"ok":"ng");
+  fb.innerHTML=`<strong>${ok?"正解":"不正解"}</strong><p>${esc(q.e)}</p>
+  <button class="btn" id="nx">${i+1<N?"次の問題":"結果を見る"}</button>`;
+  const nx=document.getElementById("nx");nx.focus();nx.onclick=()=>{i++;i<N?show():result()};
+}
+function cigarSVG(frac){
+  const w=300, burn=Math.round(w*(1-frac*0.85));
+  return `<svg class="cigar" viewBox="0 0 320 26" aria-hidden="true">
+  <rect x="10" y="5" width="${burn-10}" height="16" rx="8" fill="#6b4a2f"/>
+  <rect x="${Math.max(30,burn*0.25)}" y="4" width="34" height="18" fill="#b8892f"/>
+  <rect x="${burn}" y="5" width="${310-burn}" height="16" fill="#9b8b7c"/>
+  <rect x="${burn-3}" y="5" width="5" height="16" fill="#d8643a"/></svg>`;
+}
+function result(){
+  const best=Math.max(score,+(store.get("kemuri-best")||0));store.set("kemuri-best",best);
+  const r=RANKS.find(x=>score>=x.min);
+  app.className="card result";
+  app.innerHTML=`<div class="rank"><div class="score">${score}<small> / ${N}</small></div>
+  ${cigarSVG(score/N)}<div class="name">${r.name}級</div><div class="spec">${r.spec}</div>
+  <div class="best">自己ベスト ${best} / ${N}</div></div>
+  <h2>ふりかえり</h2>
+  <ul class="review">${log.map(l=>`<li><span class="mk" style="color:${l.ok?"var(--ok)":"var(--ng)"}">${l.ok?"○":"×"}</span><span>${esc(l.q.q)}<br><span style="color:var(--muted)">答え:${l.q.t==="ox"?(l.q.a?"×":"○"):esc(l.q.c[l.q.a])}</span></span></li>`).join("")}</ul>
+  <div class="row"><button class="btn" id="re">もう一本</button><button class="btn ghost" id="top">はじめに戻る</button></div>`;
+  document.getElementById("re").onclick=start;document.getElementById("top").onclick=intro;
+}
+intro();
+</script>
+
+</body></html>
