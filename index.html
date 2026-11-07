@@ -5,92 +5,179 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>紫煙クイズ</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@600;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@500;600;800&family=Zen+Old+Mincho:wght@400;600&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
 <style>
-/* Layout: 一列のカード。葉巻のバンド(帯)を見出しに使い、ヒュミドールの杉材の色で包む。単一のダークテーマ */
+/* Layout: ランプの灯る書斎バー。壁の木目とランプの光の中に、革装のメニュー帳のような一枚のカードを置く。夜の店なので単一のダークテーマ */
 :root{
-  --bg:#1d1612;          /* ヒュミドール内側 */
-  --panel:#2a201a;       /* 杉材の板 */
-  --line:#4a3a2e;
-  --fg:#efe4d4;          /* 灰色がかった紙 */
-  --muted:#b3a08b;
-  --band:#b8892f;        /* 葉巻バンドの金 */
-  --band-ink:#2a1a0c;
-  --ember:#d8643a;       /* 火口 */
-  --ok:#7fae6e;
-  --ng:#d8643a;
+  --bg:#120d0a;          /* 灯りの届かない壁際 */
+  --wood:#1f1510;        /* ウォルナットの壁板 */
+  --leather:#241912;     /* 革装のメニュー帳 */
+  --leather-hi:#2e2018;
+  --line:#4a3826;
+  --fg:#eee2cb;          /* 古い羊皮紙 */
+  --muted:#ab977b;
+  --brass:#c9a45c;       /* 真鍮のプレート */
+  --brass-dk:#7d5f28;
+  --ink:#1c1208;
+  --lamp:rgba(255,186,104,.13); /* バンカーズランプの光 */
+  --ok:#a3c48c;
+  --ng:#d98463;
   --display:"Shippori Mincho B1","Hiragino Mincho ProN","Yu Mincho",serif;
+  --prose:"Zen Old Mincho","Hiragino Mincho ProN","Yu Mincho",serif;
   --body:"Zen Kaku Gothic New","Hiragino Sans","Yu Gothic",system-ui,sans-serif;
   color-scheme:dark;
 }
 *{box-sizing:border-box}
-html,body{height:100%}
-body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.7;
-  background-image:repeating-linear-gradient(90deg,transparent 0 7px,rgba(255,220,180,.018) 7px 8px);}
-.wrap{max-width:560px;margin:0 auto;padding-block:20px 40px;
+html,body{min-height:100%}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.75;
+  background-image:
+    radial-gradient(ellipse 70% 45% at 50% 0%,var(--lamp),transparent 70%),
+    radial-gradient(ellipse 120% 90% at 50% 40%,transparent 55%,rgba(0,0,0,.55)),
+    repeating-linear-gradient(90deg,var(--wood) 0 46px,#1b120d 46px 48px,var(--wood) 48px 96px);
+}
+.wrap{max-width:580px;margin:0 auto;padding-block:14px 44px;
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
   display:flex;flex-direction:column;gap:18px}
-.band{position:relative;background:linear-gradient(180deg,#d3a548,var(--band) 45%,#94681f);color:var(--band-ink);
-  border-radius:4px;padding:14px 18px;text-align:center;box-shadow:inset 0 0 0 2px rgba(42,26,12,.35),inset 0 0 0 5px rgba(255,236,190,.25)}
-.band h1{margin:0;font-family:var(--display);font-weight:800;font-size:clamp(28px,8vw,40px);letter-spacing:.12em;line-height:1.2}
-.band .sub{font-size:11px;letter-spacing:.3em;font-weight:700;opacity:.8}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:20px;display:flex;flex-direction:column;gap:16px}
-.intro p{margin:0;color:var(--muted)}
-.intro h2,.result h2{margin:0;font-family:var(--display);font-size:22px;text-wrap:balance}
-.meta{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
-.tag{font-size:11px;font-weight:700;letter-spacing:.12em;padding:2px 10px;border-radius:999px;border:1px solid var(--band);color:var(--band)}
-.ash{height:6px;border-radius:3px;background:#3a2d24;overflow:hidden;position:relative}
-.ash i{position:absolute;inset:0 auto 0 0;background:linear-gradient(90deg,#8d7b6c,#c9bcae);transition:width .3s}
-.ash i::after{content:"";position:absolute;right:0;top:0;bottom:0;width:6px;background:var(--ember);box-shadow:0 0 8px var(--ember)}
-.diffs{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-.dbtn{background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:14px 6px;display:flex;flex-direction:column;align-items:center;gap:2px;min-height:48px;transition:border-color .15s}
-.dbtn:hover{border-color:var(--band)}
-.dbtn:focus-visible{outline:2px solid var(--band);outline-offset:2px}
-.dbtn .dl{font-family:var(--display);font-size:20px;font-weight:800;color:var(--band)}
-.dbtn .dn{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
-.qbox{display:flex;flex-direction:column;align-items:flex-start;gap:8px}
-.genre{font-size:12px;font-weight:700;letter-spacing:.1em;padding:3px 10px;border:1px solid var(--band);border-radius:6px;background:rgba(184,137,47,.15);color:var(--fg)}
-.q{font-family:var(--display);font-size:20px;font-weight:600;line-height:1.6;margin:0;text-wrap:pretty}
+.topbar{display:flex;justify-content:flex-end}
+.bgm{display:inline-flex;align-items:center;gap:8px;font:inherit;font-size:13px;letter-spacing:.06em;cursor:pointer;
+  background:rgba(0,0,0,.25);color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:6px 14px;min-height:36px}
+.bgm[aria-pressed="true"]{color:var(--brass);border-color:var(--brass-dk)}
+.bgm .eq{display:inline-flex;gap:2px;align-items:flex-end;height:12px}
+.bgm .eq i{width:2px;height:4px;background:currentColor;border-radius:1px}
+.bgm[aria-pressed="true"] .eq i{animation:eq 1.1s ease-in-out infinite}
+.bgm .eq i:nth-child(2){animation-delay:.25s}.bgm .eq i:nth-child(3){animation-delay:.5s}
+@keyframes eq{0%,100%{height:3px}50%{height:12px}}
+.band{position:relative;text-align:center;padding:16px 18px 14px;border-radius:3px;color:var(--ink);
+  background:linear-gradient(180deg,#e2c27e 0%,var(--brass) 38%,#a9853f 70%,#c9a45c 100%);
+  box-shadow:0 10px 30px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,245,215,.6),inset 0 0 0 1px rgba(60,40,10,.5)}
+.band::before,.band::after{content:"";position:absolute;top:50%;width:7px;height:7px;margin-top:-3.5px;border-radius:50%;
+  background:radial-gradient(circle at 35% 35%,#f2dca6,#6e5220);box-shadow:0 1px 1px rgba(0,0,0,.4)}
+.band::before{left:10px}.band::after{right:10px}
+.band h1{margin:0;font-family:var(--display);font-weight:800;font-size:clamp(28px,8vw,40px);letter-spacing:.16em;line-height:1.25;
+  text-shadow:0 1px 0 rgba(255,240,200,.55),0 -1px 0 rgba(60,40,10,.35)}
+.band .sub{font-size:10.5px;letter-spacing:.34em;font-weight:700;opacity:.75}
+.card{position:relative;background:linear-gradient(180deg,var(--leather-hi),var(--leather));border:1px solid var(--line);border-radius:4px;padding:24px 22px;
+  display:flex;flex-direction:column;gap:18px;box-shadow:0 18px 40px rgba(0,0,0,.45)}
+.card::before{content:"";position:absolute;inset:6px;border:1px solid rgba(201,164,92,.22);border-radius:2px;pointer-events:none}
+.card>*{position:relative}
+.intro h2,.result h2{margin:0;font-family:var(--display);font-weight:600;font-size:22px;line-height:1.6;text-wrap:balance}
+.intro p{margin:0;color:var(--muted);font-family:var(--prose);font-size:15px}
+.rule{display:flex;align-items:center;gap:12px;color:var(--brass);font-size:11px;letter-spacing:.3em}
+.rule::before,.rule::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--brass-dk),transparent)}
+.meta{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums;letter-spacing:.04em}
+.tag{font-size:11px;font-weight:700;letter-spacing:.12em;padding:2px 10px;border-radius:999px;border:1px solid var(--brass-dk);color:var(--brass)}
+.ash{height:5px;border-radius:3px;background:#3a2b20;overflow:hidden;position:relative}
+.ash i{position:absolute;inset:0 auto 0 0;background:linear-gradient(90deg,#8d7b6c,#cdbfb0);transition:width .4s}
+.ash i::after{content:"";position:absolute;right:0;top:0;bottom:0;width:6px;background:var(--ng);box-shadow:0 0 8px var(--ng)}
+.qbox{display:flex;flex-direction:column;align-items:flex-start;gap:10px}
+.genre{font-size:12px;font-weight:700;letter-spacing:.12em;padding:2px 10px;border:1px solid var(--brass-dk);border-radius:6px;background:rgba(201,164,92,.12);color:var(--fg)}
+.q{font-family:var(--display);font-size:20px;font-weight:600;line-height:1.7;margin:0;text-wrap:pretty}
 .choices{display:grid;gap:10px}
 .choices.ox{grid-template-columns:1fr 1fr}
 button{font:inherit;cursor:pointer}
-.ch{text-align:left;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:12px 14px;min-height:48px;transition:border-color .15s,background .15s}
+.ch{text-align:left;background:rgba(0,0,0,.22);color:var(--fg);border:1px solid var(--line);border-radius:4px;padding:12px 14px;min-height:48px;transition:border-color .2s,background .2s}
 .ox .ch{text-align:center;font-family:var(--display);font-size:34px;line-height:1;padding:16px}
-.ch:hover:not(:disabled){border-color:var(--band)}
-.ch:focus-visible,.btn:focus-visible{outline:2px solid var(--band);outline-offset:2px}
+.ch:hover:not(:disabled){border-color:var(--brass);background:rgba(201,164,92,.07)}
+.ch:focus-visible,.btn:focus-visible,.dbtn:focus-visible,.bgm:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
 .ch:disabled{cursor:default}
-.ch.right{border-color:var(--ok);background:rgba(127,174,110,.14)}
-.ch.wrong{border-color:var(--ng);background:rgba(216,100,58,.14)}
-.ch.dim{opacity:.45}
-.fb{border-top:1px dashed var(--line);padding-top:14px;display:flex;flex-direction:column;gap:6px}
-.fb strong{font-size:15px}
+.ch.right{border-color:var(--ok);background:rgba(163,196,140,.12)}
+.ch.wrong{border-color:var(--ng);background:rgba(217,132,99,.12)}
+.ch.dim{opacity:.4}
+.fb{border-top:1px solid var(--line);padding-top:16px;display:flex;flex-direction:column;gap:10px}
+.fb strong{font-family:var(--display);font-size:18px;font-weight:600;letter-spacing:.04em}
 .fb.ok strong{color:var(--ok)} .fb.ng strong{color:var(--ng)}
-.fb p{margin:0;color:var(--muted);font-size:14px}
-.btn{background:var(--band);color:var(--band-ink);border:0;border-radius:6px;padding:14px;font-weight:700;letter-spacing:.08em;min-height:48px}
-.btn.ghost{background:transparent;color:var(--fg);border:1px solid var(--line)}
+.fb .lbl{font-size:11px;letter-spacing:.3em;color:var(--brass)}
+.fb p{margin:0;font-family:var(--prose);font-size:15px;line-height:1.9;color:var(--fg);padding-left:14px;border-left:1px solid var(--brass-dk)}
+.btn{background:linear-gradient(180deg,#d6b46c,var(--brass) 50%,#a9853f);color:var(--ink);border:0;border-radius:4px;padding:14px;font-weight:700;letter-spacing:.12em;min-height:48px;
+  box-shadow:inset 0 1px 0 rgba(255,245,215,.5),0 4px 12px rgba(0,0,0,.35)}
+.btn.ghost{background:transparent;color:var(--fg);border:1px solid var(--line);box-shadow:none}
 .row{display:flex;gap:10px;flex-wrap:wrap}.row .btn{flex:1 1 140px}
-.rank{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 0}
+.diffs{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.dbtn{background:rgba(0,0,0,.22);color:var(--fg);border:1px solid var(--line);border-radius:4px;padding:14px 4px 12px;display:flex;flex-direction:column;align-items:center;gap:2px;min-height:48px;min-width:0;transition:border-color .2s,background .2s}
+.dbtn:hover{border-color:var(--brass);background:rgba(201,164,92,.07)}
+.dbtn .dl{font-family:var(--display);font-size:20px;font-weight:800;color:var(--brass);letter-spacing:.06em}
+.dbtn .ds{font-family:var(--prose);font-size:12px;color:var(--fg)}
+.dbtn .dn{font-size:11.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.rank{display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 0}
 .rank .score{font-family:var(--display);font-size:56px;font-weight:800;line-height:1;font-variant-numeric:tabular-nums}
 .rank .score small{font-size:22px;color:var(--muted)}
-.rank .name{font-family:var(--display);font-size:22px;color:var(--band)}
+.rank .name{font-family:var(--display);font-size:22px;color:var(--brass);letter-spacing:.06em}
 .rank .spec{font-size:12px;color:var(--muted);letter-spacing:.08em}
+.rank .say{font-family:var(--prose);font-size:15px;color:var(--fg);text-align:center;margin:6px 0 0;text-wrap:balance}
 .cigar{width:100%;max-width:320px;height:26px;margin:4px 0}
-.review{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
-.review li{display:grid;grid-template-columns:22px 1fr;gap:8px;font-size:14px;padding:8px 0;border-bottom:1px solid var(--line)}
+.review{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.review li{display:grid;grid-template-columns:22px 1fr;gap:8px;font-size:14px;padding:10px 0;border-bottom:1px solid var(--line)}
 .review li span:last-child{min-width:0}
 .review .mk{font-weight:700}
 .note{font-size:12px;color:var(--muted);text-align:center;margin:0}
 .best{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
-@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+[hidden]{display:none!important}
+/* 用語集 */
+.gbtn{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 18px;letter-spacing:.1em;font-family:var(--display);font-size:17px}
+.gbtn .gcount{font-family:var(--body);font-size:12px;color:var(--muted);letter-spacing:.04em;font-variant-numeric:tabular-nums}
+.back{align-self:flex-start;background:none;border:0;color:var(--brass);font-size:14px;padding:6px 0;min-height:36px;letter-spacing:.04em}
+.gloss h2,.fresh h2{margin:0;font-family:var(--display);font-weight:600;font-size:22px}
+.gprog{display:flex;flex-direction:column;gap:6px;font-size:14px;color:var(--muted);font-variant-numeric:tabular-nums}
+.gprog b{font-family:var(--display);font-size:22px;color:var(--brass);font-weight:800}
+.gprog .ash i::after{display:none}
+.gprog .ash i{background:linear-gradient(90deg,var(--brass-dk),var(--brass))}
+.ghint{margin:0;font-size:13px;color:var(--muted)}
+.gempty{margin:8px 0;color:var(--muted);font-size:14px}
+.gsearch{width:100%;font:inherit;font-size:16px;color:var(--fg);background:rgba(0,0,0,.3);border:1px solid var(--line);border-radius:4px;padding:10px 12px;min-height:44px}
+.gsearch::placeholder{color:var(--muted);opacity:.8}
+.gsearch:focus{outline:2px solid var(--brass);outline-offset:1px}
+.seg{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line);border-radius:4px;overflow:hidden}
+.seg button{background:transparent;color:var(--muted);border:0;padding:9px;min-height:40px;letter-spacing:.1em}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button[aria-pressed="true"]{background:rgba(201,164,92,.16);color:var(--brass);font-weight:700}
+.tabs{display:flex;gap:8px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:6px;margin-bottom:4px;scrollbar-width:thin}
+.tab{flex:none;display:flex;align-items:baseline;gap:6px;background:rgba(0,0,0,.22);color:var(--fg);border:1px solid var(--line);border-radius:999px;padding:6px 14px;min-height:36px}
+.tab small{font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums}
+.tab[aria-pressed="true"]{border-color:var(--brass);color:var(--brass);background:rgba(201,164,92,.1)}
+.glist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.gi{width:100%;text-align:left;display:grid;grid-template-columns:auto 1fr;column-gap:10px;align-items:baseline;background:none;color:var(--fg);border:0;border-bottom:1px solid var(--line);padding:12px 4px;min-height:48px}
+button.gi:hover{background:rgba(201,164,92,.06)}
+.gi .gw2{font-family:var(--display);font-size:17px;font-weight:600}
+.gi .gr2{font-size:12px;color:var(--muted);min-width:0}
+.gi .gs2{grid-column:1/-1;font-size:13px;color:var(--muted);font-family:var(--prose)}
+.gi.locked .gw2{color:var(--muted);letter-spacing:.2em}
+.grow{margin:14px 0 2px;font-size:12px;letter-spacing:.3em;color:var(--brass);font-weight:700}
+.gd{display:flex;flex-direction:column;align-items:flex-start;gap:8px}
+.gw{margin:4px 0 0;font-family:var(--display);font-size:28px;font-weight:800;letter-spacing:.04em;line-height:1.3}
+.gr{font-size:13px;color:var(--muted);letter-spacing:.1em;margin-top:-4px}
+.gs{margin:4px 0 0;font-family:var(--display);font-size:17px;color:var(--brass)}
+.ge{margin:0;font-family:var(--prose);font-size:15px;line-height:1.95;padding-left:14px;border-left:1px solid var(--brass-dk)}
+.grel{display:flex;flex-direction:column;gap:8px;margin-top:8px;width:100%}
+.grel .lbl,.newterm{font-size:11px;letter-spacing:.3em;color:var(--brass)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{background:rgba(201,164,92,.1);color:var(--fg);border:1px solid var(--brass-dk);border-radius:999px;padding:5px 14px;min-height:34px;font-size:14px}
+.chip.locked{display:inline-flex;align-items:center;background:transparent;color:var(--muted);border-style:dashed;letter-spacing:.2em}
+.newterm{display:flex;flex-wrap:wrap;align-items:center;gap:8px;letter-spacing:.1em}
+.fresh{display:flex;flex-direction:column;gap:10px;padding:14px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.fresh h2{font-size:17px}
+.term{display:inline;font:inherit;color:inherit;background:none;border:0;padding:0;margin:0;cursor:pointer;-webkit-appearance:none;appearance:none;
+  text-decoration:underline dotted var(--brass);text-underline-offset:4px;text-decoration-thickness:1.5px}
+.term:hover{color:var(--brass)}
+.term:focus-visible,.chip:focus-visible,.gi:focus-visible,.tab:focus-visible,.seg button:focus-visible,.back:focus-visible,.mclose:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
+.modal{position:fixed;inset:0;z-index:50;display:flex;align-items:flex-end;justify-content:center;background:rgba(8,5,3,.72);
+  padding:calc(env(safe-area-inset-top,0px) + 24px) max(12px,env(safe-area-inset-right,0px)) calc(env(safe-area-inset-bottom,0px) + 12px) max(12px,env(safe-area-inset-left,0px))}
+.sheet{position:relative;width:100%;max-width:520px;max-height:100%;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;
+  background:linear-gradient(180deg,var(--leather-hi),var(--leather));border:1px solid var(--brass-dk);border-radius:6px;padding:24px 22px 22px;box-shadow:0 -10px 40px rgba(0,0,0,.6)}
+.mclose{position:absolute;top:8px;right:8px;width:40px;height:40px;background:none;border:0;color:var(--muted);font-size:26px;line-height:1}
+html.lock,html.lock body{overflow:hidden}
+@media (min-width:600px){.modal{align-items:center}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
 </head>
 <body>
 
 <div class="wrap">
-  <header class="band"><div class="sub">FOR AFICIONADOS</div><h1>紫煙クイズ</h1><div class="sub">CIGAR · PIPE · KISERU</div></header>
+  <div class="topbar"><button class="bgm" id="bgm" aria-pressed="false"><span class="eq" aria-hidden="true"><i></i><i></i><i></i></span><span id="bgmlbl">ジャズ BGM オフ</span></button></div>
+  <header class="band"><div class="sub">BAR &amp; LIBRARY</div><h1>紫煙クイズ</h1><div class="sub">CIGAR · PIPE · KISERU</div></header>
   <main id="app" class="card"></main>
   <p class="note">喫煙は20歳になってから。クイズは嗜好品の文化と知識を楽しむためのものです。</p>
 </div>
+<div class="modal" id="modal" hidden><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="gtitle"><button type="button" class="mclose" id="mclose" aria-label="閉じる">×</button><div id="mbody"></div></div></div>
 
 <script>
 const POOL=[
@@ -167,7 +254,7 @@ const POOL=[
  {g:"シーシャ",t:"ox",q:"シーシャの加熱には、ヤシ殻から作るココナッツ炭がよく使われる。",a:0,e:"火力が安定し、匂いが少ないのが好まれる理由です。"},
  {g:"喫煙具",t:"4",q:"高級ライター「エス・テー・デュポン」はどこの国のブランド?",c:["イタリア","フランス","スイス","ドイツ"],a:1,e:"フランス。パリで生まれたラグジュアリーブランドです。"},
  {g:"喫煙具",t:"ox",q:"デュポンのライターは、ふたを開けたときの澄んだ金属音で知られる。",a:0,e:"「キーン」という開閉音は、ブランドの象徴として大切にされています。"},
- {g:"歴史",t:"4",q:"19世紀後半に、紙巻きたばこの自動巻上機を発明したのは?",c:["ジェームズ・ボンサック","ジェームズ・デューク","ジャン・ニコ","アルフレッド・ダンヒル"],a:0,e:"ボンサックの機械で大量生産が可能になり、紙巻きが一気に広まりました。"},
+ {g:"歴史",t:"4",q:"19世紀後半に、紙巻きたばこの自動巻上機を発明したのは?",c:["ジェームズ・ボンサック","ジェームズ・デューク","ジャン・ニコ","アルフレッド・ダンヒル"],a:0,e:"ボンサックの機械で大量生産が可能になり、紙巻きは瞬く間に世界へ広まっていきました。"},
  {g:"歴史",t:"ox",q:"イングランド王ジェームズ1世は、たばこを批判する小冊子を書いたことで知られる。",a:0,e:"1604年の『たばこへの反論』。国王自ら喫煙を戒めた文書です。"},
  {g:"葉巻",t:"4",q:"葉巻の主な原料は?",c:["たばこの葉","紙","茶葉","麻"],a:0,e:"葉巻は中身から外側まで、すべてたばこの葉でできています。"},
  {g:"葉巻",t:"ox",q:"葉巻は英語で「シガー」と呼ばれる。",a:0,e:"cigar。紙巻きたばこは cigarette(シガレット)です。"},
@@ -209,7 +296,7 @@ const POOL=[
  {d:1,g:"歴史",t:"4",q:"たばこ「ラッキーストライク」のパッケージで有名なマークは?",c:["赤い丸","青い星","金の鳩","緑の三角"],a:0,e:"白地に赤い丸のマーク。的(まと)のようなデザインで知られます。"},
  {d:1,g:"歴史",t:"4",q:"たばこ「ピース」のパッケージに描かれている鳥は?",c:["ハト","ワシ","ツル","カラス"],a:0,e:"平和(ピース)の象徴であるハトが、オリーブの枝をくわえています。"},
  {d:1,g:"歴史",t:"4",q:"たばこ「マイルドセブン」は、2013年に何という名前に変わった?",c:["メビウス","セブンスター","ピアニッシモ","ケント"],a:0,e:"メビウス(MEVIUS)。マイルドセブンのMとSevenのVを受け継いだ名前です。"},
- {d:1,g:"歴史",t:"ox",q:"「ハイライト」は、日本で発売されているたばこの銘柄である。",a:0,e:"1960年発売のロングセラー。青いパッケージでおなじみです。"},
+ {d:1,g:"歴史",t:"ox",q:"「ハイライト」は、日本で発売されているたばこの銘柄である。",a:0,e:"1960年発売のロングセラー。あの青いパッケージに、懐かしさを覚える方も多いでしょう。"},
  {d:1,g:"マナー",t:"ox",q:"加熱式たばこも、改正健康増進法の規制の対象になっている。",a:0,e:"加熱式たばこも屋内では原則禁煙です。専用の喫煙室なら飲食しながら吸える場合もあります。"},
  {d:1,g:"たばこ葉",t:"4",q:"収穫して乾燥させたたばこの葉は、主に何色になる?",c:["茶色","青色","白色","赤色"],a:0,e:"緑の葉は乾燥と熟成で、黄色から茶色に変わっていきます。"},
  {d:2,g:"葉巻",t:"4",q:"太く短い葉巻のサイズの代表は?",c:["ロブスト","パナテラ","ランセロ","ペティコロナ"],a:0,e:"ロブスト。太さのわりに短く、30〜45分ほどで濃い味を楽しめます。"},
@@ -232,6 +319,37 @@ const POOL=[
  {d:3,g:"たばこ葉",t:"ox",q:"オリエント葉は、主に天日干し(サンキュア)で乾燥させる。",a:0,e:"強い日差しで乾かすことで、独特の香りが生まれます。"},
  {d:3,g:"歴史",t:"4",q:"WHOの「たばこ規制枠組条約」が発効した年は?",c:["2005年","1995年","2015年","1985年"],a:0,e:"2005年。日本も締約国になっています。"},
  {d:3,g:"歴史",t:"4",q:"WHOが定める「世界禁煙デー」は何月何日?",c:["5月31日","4月1日","10月10日","12月1日"],a:0,e:"5月31日。日本ではこの日から1週間が禁煙週間です。"},
+ // ---- 新ジャンル「海外」「逸話」「用語」 各10問 ----
+ {d:2,g:"海外",t:"4",q:"フランスのたばこ屋の店先に掲げられている、赤い菱形の看板の通称は?",c:["キャロット","ブション","ガレット","シトロン"],a:0,e:"「キャロット(にんじん)」と呼ばれます。かつて刻みたばこの湿り気を保つためににんじんを入れていた習わしが、名の由来と言われています。"},
+ {d:2,g:"海外",t:"4",q:"インドネシアの「クレテック」に、たばこと一緒に混ぜられている香辛料は?",c:["クローブ","シナモン","カルダモン","ナツメグ"],a:0,e:"クローブ(丁子)です。火をつけるとパチパチと音を立てることから、その音にちなんで名付けられたと言われています。"},
+ {d:3,g:"海外",t:"4",q:"インドの細巻きたばこ「ビディ」で、刻みたばこを巻くのに使われるものは?",c:["テンドゥの葉","バナナの葉","トウモロコシの皮","ヤシの葉"],a:0,e:"黒檀の仲間であるテンドゥの葉で巻き、糸で縛って留めます。小ぶりで素朴な一本で、インドでは古くから庶民に親しまれてきました。"},
+ {d:2,g:"海外",t:"4",q:"ゴロワーズやジタンに代表される、フランスの伝統的な「黒たばこ」の葉の特徴は?",c:["空気乾燥させた濃い色の葉","熱風乾燥させた明るい色の葉","煙でいぶして乾かした葉","日陰で育てた若い葉"],a:0,e:"空気乾燥させた濃い色の葉を使い、力強く香ばしい味わいになります。フランスでは「タバ・ブラン(茶色のたばこ)」と呼ばれてきました。"},
+ {d:3,g:"海外",t:"4",q:"フランスのたばこ「ジタン」のパッケージを長く飾ってきた図柄は?",c:["踊る女性のシルエット","翼のついたかぶと","おんどり","帆船"],a:0,e:"ジタンとは「ジプシーの女性たち」の意味で、踊る女性の姿が描かれてきました。翼のついたかぶとはゴロワーズの図柄です。なお、フランスでは2017年からたばこのパッケージの無地化が義務づけられています。"},
+ {d:2,g:"海外",t:"ox",q:"キューバの葉巻ブランド「ロメオ・イ・フリエタ」は、シェイクスピアの戯曲『ロミオとジュリエット』にちなんで名付けられた。",a:0,e:"正解は○。1875年に創業した、ハバナを代表する老舗ブランドのひとつです。バンドやロゴにも、物語にちなんだ意匠が使われています。"},
+ {d:2,g:"海外",t:"ox",q:"「マールボロ」は、もともと女性向けのたばことして売り出された歴史がある。",a:0,e:"正解は○。1920年代には「5月のようにマイルド」をうたう女性向けの銘柄でした。カウボーイの広告で男性的なイメージに生まれ変わったのは、1950年代のことです。"},
+ {d:3,g:"海外",t:"ox",q:"「ラッキーストライク」のパッケージは、第二次世界大戦中に緑色から白色へ変わった。",a:0,e:"正解は○。1942年、「ラッキーストライクの緑は戦争に行った」という広告とともに白地に改められました。緑の染料に使う材料が戦時中に不足したため、と説明されています。"},
+ {d:2,g:"海外",t:"ox",q:"フランスのたばこ屋では、たばこのほかに切手や宝くじなどを扱っていることが多い。",a:0,e:"正解は○。たばこ屋は町の小さな窓口のような存在です。カフェを兼ねた店も多く、旅先では赤い看板を探すと何かと重宝します。"},
+ {d:3,g:"海外",t:"ox",q:"「キャメル」は、トルコ産のオリエント葉を配合したブレンドとして売り出された。",a:0,e:"正解は○。1913年に、トルコ葉とアメリカ産の葉を合わせたブレンドとして登場しました。パッケージのラクダも、オリエントの香りを印象づけるためのものです。"},
+ {d:2,g:"逸話",t:"4",q:"ルネ・マグリットの絵画『イメージの裏切り』で、パイプの絵の下に書かれている言葉は?",c:["これはパイプではない","これは夢である","これは絵にすぎない","パイプを吸うべからず"],a:0,e:"「これはパイプではない」と書かれています。描かれたものはあくまで絵であって、本物のパイプではない、という問いかけです。"},
+ {d:3,g:"逸話",t:"4",q:"葉巻を愛したフィデル・カストロが、葉巻をやめたと公にしたのは何年?",c:["1985年","1959年","1972年","2000年"],a:0,e:"1985年です。健康のためと語り、国民の禁煙を促す意味もあったとされています。コイーバ誕生の逸話とあわせて、よく語られる話です。"},
+ {d:3,g:"逸話",t:"4",q:"シャーロック・ホームズが刻みたばこをしまっていた場所として描かれているのは?",c:["ペルシャ製スリッパのつま先","帽子の中","地球儀の中","石炭入れ"],a:0,e:"ペルシャ製スリッパのつま先です。葉巻のほうは石炭入れにしまっていたと描かれており、ホームズの無頓着ぶりを伝える有名な一節です。"},
+ {d:3,g:"逸話",t:"4",q:"パイプを愛したアインシュタインが、1950年に終身会員になったとされる団体は?",c:["モントリオールのパイプ愛好家クラブ","ロンドンの葉巻クラブ","ベルンのたばこ研究会","プリンストンの喫煙者協会"],a:0,e:"モントリオールのパイプ愛好家クラブと言われています。その際、パイプは落ち着いた判断の助けになる、という趣旨の言葉を寄せたとも伝えられます。"},
+ {d:2,g:"逸話",t:"4",q:"「葉巻はときに、ただの葉巻にすぎない」という言葉。一般に誰の言葉として広まっている?",c:["フロイト","チャーチル","カストロ","マーク・トウェイン"],a:0,e:"精神分析のフロイトの言葉として広く知られています。ただ、本人の著作や確かな記録には見当たらず、実際の出典ははっきりしていません。"},
+ {d:3,g:"逸話",t:"ox",q:"「禁煙なんて簡単だ、何度もやってきた」という趣旨の言葉は、マーク・トウェインの著作に記録が確認されている。",a:1,e:"正解は×。トウェインの言葉として有名ですが、本人の著作や記録には確認されていません。名言は、ときに持ち主を変えて広まっていくものです。"},
+ {d:1,g:"逸話",t:"ox",q:"漫画のキャラクター「ポパイ」は、コーンパイプをくわえている。",a:0,e:"正解は○。いつも口元にコーンパイプをくわえた姿で描かれています。素朴なコーンパイプは、船乗りや労働者の象徴でもありました。"},
+ {d:2,g:"逸話",t:"ox",q:"1945年、マッカーサーはコーンパイプをくわえた姿で厚木飛行場に降り立った。",a:0,e:"正解は○。サングラスにコーンパイプという姿は、終戦直後の日本で強い印象を残しました。コーンパイプは彼のトレードマークとして知られています。"},
+ {d:2,g:"逸話",t:"ox",q:"ゴッホは、パイプをくわえた自画像を描いている。",a:0,e:"正解は○。1889年の『耳に包帯をしてパイプをくわえた自画像』がよく知られています。ゴッホはパイプを愛し、パイプそのものも静物画に描きました。"},
+ {d:3,g:"逸話",t:"ox",q:"芥川龍之介には、『煙草と悪魔』という短編小説がある。",a:0,e:"正解は○。たばこは悪魔が日本に持ち込んだもの、という奇想を描いた作品です。たばこ伝来の歴史を下敷きにした、軽妙な一編です。"},
+ {d:2,g:"用語",t:"4",q:"パイプの愛好家が言う「ゴースト」とは?",c:["前に吸ったたばこの香りが残ること","火が途中で消えてしまうこと","煙が白く濃く出ること","灰が崩れずに残ること"],a:0,e:"前に詰めたたばこの香りが、パイプに残って次の一服に混じることです。香りの強い着香たばこはゴーストが残りやすく、専用のパイプを分ける愛好家もいます。"},
+ {d:3,g:"用語",t:"4",q:"葉巻の煙を口から鼻へ抜いて、香りを感じる吸い方を何と呼ぶ?",c:["レトロヘイル","パージ","トースト","ドロー"],a:0,e:"レトロヘイルです。口だけでは気づかない香りの層が感じられます。強い葉巻では刺激も強いので、少しずつ試すのが無難です。"},
+ {d:2,g:"用語",t:"4",q:"パイプを吸っていて舌がひりひりする状態を、愛好家は何と呼ぶ?",c:["タンバイト","ゴースト","ドッティ","ケーキ"],a:0,e:"タンバイトです。速く吸いすぎて火皿が熱くなると起こりやすくなります。ゆっくりした呼吸のように吸うのがコツとされます。"},
+ {d:3,g:"用語",t:"4",q:"葉巻のラッパーの表面に見られる、小さな粒状のざらつきを何と呼ぶ?",c:["トゥース","プルーム","ベイン","シーム"],a:0,e:"トゥースです。葉の油分を含んだ粒で、よく育った葉のしるしとされます。ベインは葉脈、シームは巻き終わりの継ぎ目のことです。"},
+ {d:2,g:"用語",t:"4",q:"パイプたばこで「シャグ」と呼ばれる刻み方は?",c:["ごく細かく刻んだもの","板状に圧縮したもの","サイコロ状に切ったもの","縄のようによったもの"],a:0,e:"ごく細かく刻んだものです。手巻きの紙巻き用にもよく使われます。板状はフレーク、サイコロ状はキューブカットと呼ばれます。"},
+ {d:2,g:"用語",t:"ox",q:"葉巻の「ドロー」とは、吸い込むときの煙の通りやすさ(引きの重さ)のことである。",a:0,e:"正解は○。巻きがきつすぎると重く、ゆるすぎると軽すぎて燃え方が乱れます。ほどよいドローは、よく巻かれた葉巻の条件です。"},
+ {d:3,g:"用語",t:"ox",q:"「ドッティ」とは、パイプの火皿の底に残る、燃え残りのたばこのことである。",a:0,e:"正解は○。湿った燃え残りは、吸い終えたら軽く叩いて落とします。最後まできれいに燃やし切ることは、パイプ吸いの腕の見せどころです。"},
+ {d:2,g:"用語",t:"ox",q:"「シガリロ」とは、小型で細身の葉巻のことである。",a:0,e:"正解は○。短い時間で楽しめるのが魅力です。手巻きのものから機械巻きのものまで、さまざまな種類があります。"},
+ {d:2,g:"用語",t:"ox",q:"「ボックスプレス」とは、断面が丸みを帯びた四角形になるよう押し固めた葉巻のことである。",a:0,e:"正解は○。もとは箱にぎっしり詰めた際に自然に角ばったものが始まりです。手に持ちやすく、燃え方が穏やかになるとも言われます。"},
+ {d:3,g:"用語",t:"ox",q:"「プーロ」とは、ラッパー・バインダー・フィラーのすべてを同じ国の葉で作った葉巻のことである。",a:0,e:"正解は○。スペイン語で「純粋な」の意味です。その国の土地の個性が、混じりけなく味わえる一本とされます。"},
  {d:1,g:"シーシャ",t:"4",q:"シーシャで、煙を吸うための管を何と呼ぶ?",c:["ホース","ステム","パイプ","チムニー"],a:0,e:"ホース。先にマウスピースをつけて吸います。"},
  {d:1,g:"シーシャ",t:"ox",q:"シーシャのフレーバーには、フルーツ系のものが多い。",a:0,e:"アップルやミント、ベリー系などが定番です。"},
  {d:1,g:"喫煙具",t:"4",q:"たばこの灰を落とすための器は?",c:["灰皿","ヒュミドール","タンパー","カッター"],a:0,e:"灰皿。葉巻用は、葉巻を置く溝が太く作られています。"},
@@ -281,14 +399,18 @@ POOL.forEach((q,n)=>{if(!q.d)q.d=+D[n]});
 [46,54,57].forEach(n=>POOL[n].d=1); // 各難易度を50問にそろえる調整
 [0,25].forEach(n=>POOL[n].d=3);
 const LV={1:"簡単",2:"普通",3:"難しい"};
+const LVSUB={1:"まずは一服",2:"嗜みの域",3:"通の領分"};
+const OKS=["お見事です。","ご明察。","さすがです。","その通りです。"];
+const NGS=["惜しいところでした。","今回は外れです。","ここは覚えておきたいところです。","少し意外だったかもしれません。"];
+const pick=a=>a[Math.floor(Math.random()*a.length)];
 const G="葉巻,葉巻,葉巻,葉巻,葉巻,葉巻,葉巻,葉巻,葉巻,葉巻,葉巻,パイプ,パイプ,パイプ,キセル,歴史,たばこ葉,たばこ葉,たばこ葉,たばこ葉,歴史,歴史,パイプ,葉巻,葉巻,葉巻,葉巻,葉巻,葉巻,葉巻,葉巻,葉巻,葉巻,葉巻,葉巻,パイプ,パイプ,パイプ,パイプ,パイプ,キセル,歴史,歴史,たばこ葉,シーシャ,シーシャ,葉巻,喫煙具,歴史,歴史".split(",");
 POOL.forEach((q,n)=>{q.g=q.g||G[n];q.id=n});
 const RANKS=[
- {min:10,name:"ダブルコロナ",spec:"7⅝″ × 49 ── 真のアフィシオナード"},
- {min:8,name:"チャーチル",spec:"7″ × 47 ── 堂々たる愛好家"},
- {min:6,name:"ロブスト",spec:"4⅞″ × 50 ── 確かな腕前"},
- {min:4,name:"コロナ",spec:"5⅝″ × 42 ── 着実に一服"},
- {min:0,name:"ペティコロナ",spec:"5″ × 40 ── これからの一本"}
+ {min:10,name:"ダブルコロナ",spec:"7⅝″ × 49 ── 真のアフィシオナード",say:"文句なしの満点です。今夜はゆっくり、とっておきの一本をどうぞ。"},
+ {min:8,name:"チャーチル",spec:"7″ × 47 ── 堂々たる愛好家",say:"見事な腕前です。カウンターで語れば、一目置かれるでしょう。"},
+ {min:6,name:"ロブスト",spec:"4⅞″ × 50 ── 確かな腕前",say:"しっかりと身についた知識です。あと一歩で、通の仲間入りです。"},
+ {min:4,name:"コロナ",spec:"5⅝″ × 42 ── 着実に一服",say:"悪くない滑り出しです。解説を読み返して、もう一本いかがでしょう。"},
+ {min:0,name:"ペティコロナ",spec:"5″ × 40 ── これからの一本",say:"どなたにも最初の一本があります。焦らず、ゆっくり味わっていきましょう。"}
 ];
 const N=10, app=document.getElementById("app");
 let qs=[],i=0,score=0,log=[],diff=2;
@@ -296,12 +418,151 @@ const store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},se
 function shuffle(a){a=a.slice();for(let j=a.length-1;j>0;j--){const k=Math.floor(Math.random()*(j+1));[a[j],a[k]]=[a[k],a[j]]}return a}
 function esc(s){return s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
 
+/* ===== 用語集 =====
+   w(用語)が問題文・選択肢・解説のどこかに出てくる問題に答えると解放される */
+const GLOSSARY=[
+ {id:"wrapper",w:"ラッパー",r:"らっぱー",cat:"葉巻",s:"葉巻のいちばん外側を包む葉",e:"葉巻の見た目と最初の香りを決める、いちばん外側の葉です。薄くしなやかで、傷のない上質な葉が選ばれます。色の濃淡によって、クラロやマデューロなどの呼び名があります。",rel:["binder","filler","maduro"]},
+ {id:"binder",w:"バインダー",r:"ばいんだー",cat:"葉巻",s:"フィラーを束ねる内側の葉",e:"フィラーをまとめて形を整える葉で、ラッパーの内側に巻かれます。表からは見えませんが、巻きの締まりや燃え方を支える大切な役割を担っています。",rel:["filler","wrapper"]},
+ {id:"filler",w:"フィラー",r:"ふぃらー",cat:"葉巻",s:"葉巻の芯に詰められる葉",e:"葉巻のいちばん内側に詰められる葉で、味わいの中心を担います。株のどの位置の葉を使うかによって、味の強さや燃えやすさが変わります。",rel:["binder","ligero","wrapper"]},
+ {id:"ringgauge",w:"リングゲージ",r:"りんぐげーじ",cat:"葉巻",s:"葉巻の太さを表す単位",e:"1ゲージは64分の1インチで、50なら直径はおよそ2cmです。太く短いロブストは50前後、細身のものは30台が目安になります。",rel:["robusto","figurado"]},
+ {id:"cap",w:"キャップ",r:"きゃっぷ",cat:"葉巻",s:"吸い口をふさぐ小さな葉",e:"葉巻の吸い口側を覆うように巻かれた、小さな葉です。吸う前にカッターでここを切り、煙の通り道を作ります。",rel:["foot","cutter","wrapper"]},
+ {id:"foot",w:"フット",r:"ふっと",cat:"葉巻",s:"火をつける側の先端",e:"葉巻の、火をつける側の端です。点火の際は炎を直接当てず、先端を回しながら均一にあぶるのが基本とされます。",rel:["cap","cedar"]},
+ {id:"figurado",w:"フィギュラド",r:"ふぃぎゅらど",cat:"葉巻",s:"円筒形以外の形の葉巻",e:"先の尖ったトルペードやベリコーソなど、円筒形でない葉巻の総称です。まっすぐな円筒形のものは、パレホと呼ばれます。",rel:["ringgauge","robusto"]},
+ {id:"robusto",w:"ロブスト",r:"ろぶすと",cat:"葉巻",s:"太く短い定番のサイズ",e:"長さ4⅞インチ前後、リングゲージ50前後の太く短いサイズです。短い時間で濃い味わいを楽しめることから、世界的な定番になっています。",rel:["ringgauge","figurado"]},
+ {id:"maduro",w:"マデューロ",r:"までゅーろ",cat:"葉巻",s:"熟成で濃い茶色になった葉",e:"長い熟成を経て、濃い茶色になったラッパーのことです。甘みやコクを感じさせるものが多いとされます。淡い色の葉は、クラロ系と呼ばれます。",rel:["wrapper"]},
+ {id:"ligero",w:"リヘロ",r:"りへろ",cat:"葉巻",s:"株の上部の、味の強い葉",e:"日光をよく浴びる株の上部の葉で、味が強く、燃えにくいのが特徴です。中段のセコ、下段のボラードと組み合わせて、フィラーの釣り合いを整えます。",rel:["filler"]},
+ {id:"bloom",w:"プルーム",r:"ぷるーむ",cat:"葉巻",s:"熟成した葉巻に浮く白い結晶",e:"熟成した葉巻の表面に浮くことがある、白く細かな結晶です。油分が結晶化したものとされ、拭えば落ちます。綿のように盛り上がるカビとは、見分けが必要です。",rel:["humidor","wrapper"]},
+ {id:"retrohale",w:"レトロヘイル",r:"れとろへいる",cat:"葉巻",s:"煙を鼻へ抜く味わい方",e:"口に含んだ煙を鼻から抜いて、香りを感じる吸い方です。口だけでは気づかない香りの層がわかります。刺激が強いので、少しずつ試すのが無難です。",rel:[]},
+ {id:"briar",w:"ブライヤー",r:"ぶらいやー",cat:"パイプ",s:"パイプの代表的な木材",e:"地中海沿岸に育つエリカ・アルボレアの根こぶから作られる材です。熱に強く割れにくいため、パイプ材の主流になりました。",rel:["meerschaum","charring"]},
+ {id:"meerschaum",w:"メシャム",r:"めしゃむ",cat:"パイプ",s:"海泡石から作るパイプ",e:"海泡石(セピオライト)という鉱物を彫って作るパイプです。ドイツ語で「海の泡」を意味し、主な産地はトルコのエスキシェヒルです。使い込むと飴色に色づいていきます。",rel:["briar"]},
+ {id:"cake",w:"ケーキ",r:"けーき",cat:"パイプ",s:"火皿の内側にできる炭化層",e:"パイプの火皿の内側にできる、炭化した層です。薄く保てば火皿を守りますが、厚くなりすぎると割れの原因になります。リーマーで削って整えます。",rel:["reamer","charring","dottle"]},
+ {id:"reamer",w:"リーマー",r:"りーまー",cat:"パイプ",s:"ケーキを削る道具",e:"火皿にたまったケーキを削って、厚みを整えるための道具です。ケーキを薄く保つことで、火皿の割れを防ぎます。",rel:["cake","tamper"]},
+ {id:"tamper",w:"タンパー",r:"たんぱー",cat:"パイプ",s:"詰めた葉を押さえる道具",e:"パイプに詰めたたばこを押さえて、燃え具合を整える道具です。点火の後や吸っている途中にも、軽く押さえて使います。",rel:["charring","reamer"]},
+ {id:"shank",w:"シャンク",r:"しゃんく",cat:"パイプ",s:"火皿と吸い口をつなぐ部分",e:"パイプの火皿(ボウル)と吸い口(ステム)をつなぐ木の部分です。熱いうちにステムを抜くと傷めやすいため、冷めてから外すのが基本です。",rel:["briar"]},
+ {id:"charring",w:"チャーリングライト",r:"ちゃーりんぐらいと",cat:"パイプ",s:"パイプの最初の軽い点火",e:"本格的に火をつける前に、表面を軽くあぶる最初の点火です。焦がして整えた表面をタンパーで押さえてから、あらためて火をつけます。",rel:["tamper","cake"]},
+ {id:"ghost",w:"ゴースト",r:"ごーすと",cat:"パイプ",s:"前のたばこの香りが残ること",e:"前に吸ったたばこの香りがパイプに残り、次の一服に混じることです。香りの強い着香たばこは残りやすく、専用のパイプを分ける愛好家もいます。",rel:["cavendish"]},
+ {id:"dottle",w:"ドッティ",r:"どってぃ",cat:"パイプ",s:"火皿の底に残る燃え残り",e:"パイプの火皿の底に残る、燃え残りのたばこです。吸い終えたら軽く叩いて落とします。最後まできれいに燃やし切るのは、腕の見せどころです。",rel:["cake","tamper"]},
+ {id:"rau",w:"羅宇",r:"らう",cat:"キセル",s:"キセルの竹の管",e:"キセルの雁首と吸口をつなぐ竹の管です。ラオス産の竹が使われたことが名の由来とされます。古くなった羅宇をすげ替えて回る、羅宇屋という商売もありました。",rel:["gankubi"]},
+ {id:"gankubi",w:"雁首",r:"がんくび",cat:"キセル",s:"火皿のついた先端の金具",e:"キセルの先端の、たばこを詰める火皿がついた金属部分です。形が雁の首に似ていることから、この名で呼ばれます。",rel:["rau","haifuki"]},
+ {id:"haifuki",w:"灰吹き",r:"はいふき",cat:"キセル",s:"キセルの灰を落とす竹筒",e:"たばこ盆に置かれた、キセルの灰を落とすための竹筒です。雁首を縁に軽く当てて、灰を落とします。",rel:["gankubi"]},
+ {id:"netsuke",w:"根付",r:"ねつけ",cat:"キセル",s:"たばこ入れを帯に留める留め具",e:"腰に提げるたばこ入れなどを、帯に留めるための小さな留め具です。精巧な彫刻を施したものも多く、美術品として集められています。",rel:["rau"]},
+ {id:"burley",w:"バーレー",r:"ばーれー",cat:"葉",s:"空気乾燥させる代表的な葉",e:"納屋で風を通して乾かす、空気乾燥(エアキュア)の代表的な品種です。バージニア葉やオリエント葉と合わせて、アメリカンブレンドの柱になります。",rel:["oriental"]},
+ {id:"oriental",w:"オリエント",r:"おりえんと",cat:"葉",s:"香り高い小ぶりな葉",e:"トルコやギリシャなどで育つ、香り高い小ぶりな葉の総称です。主に天日干しで乾燥させます。紙巻きたばこの香りづけにも使われます。",rel:["burley","latakia"]},
+ {id:"latakia",w:"ラタキア",r:"らたきあ",cat:"葉",s:"燻して乾かした独特の葉",e:"煙で燻して乾燥させた、独特の香りを持つ葉です。もとはシリアやキプロスで作られ、イングリッシュ・ミクスチャーには欠かせない存在です。",rel:["oriental","perique"]},
+ {id:"perique",w:"ペリク",r:"ぺりく",cat:"葉",s:"樽で発酵させる希少な葉",e:"米国ルイジアナ州で、樽に詰めて圧をかけ発酵させる希少な葉です。少量をブレンドに加えて、スパイシーさを出すのに使われます。",rel:["latakia","flake"]},
+ {id:"cavendish",w:"キャベンディッシュ",r:"きゃべんでぃっしゅ",cat:"葉",s:"加熱・圧縮した甘い葉",e:"葉を加熱・圧縮して、甘く柔らかに仕上げたパイプたばこの製法です。黒っぽい色をしていて、着香されたものも多く見られます。",rel:["ghost","flake"]},
+ {id:"flake",w:"フレーク",r:"ふれーく",cat:"葉",s:"板状の葉を薄く切った刻み",e:"圧縮して板状にした葉を、薄く切った刻み方です。ほぐしたり折りたたんだりして詰め、ゆっくり燃えるのが特長です。",rel:["shag","cavendish"]},
+ {id:"shag",w:"シャグ",r:"しゃぐ",cat:"葉",s:"ごく細かく刻んだたばこ",e:"ごく細かく刻んだたばこで、手巻きの紙巻き用にもよく使われます。板状のフレークや、サイコロ状のキューブカットとは刻み方が異なります。",rel:["flake"]},
+ {id:"humidor",w:"ヒュミドール",r:"ひゅみどーる",cat:"道具",s:"葉巻を保管する保湿箱",e:"葉巻を一定の湿度で保管するための箱です。内張りにはスパニッシュシダーがよく使われます。華氏70度・湿度70%の「70/70ルール」が、よく知られた目安です。",rel:["bloom","cedar"]},
+ {id:"cutter",w:"シガーカッター",r:"しがーかったー",cat:"道具",s:"葉巻の吸い口を切る道具",e:"葉巻の吸い口(キャップ)を切るための道具です。まっすぐ切るギロチン、丸い穴を開けるパンチ、V字に切り込むVカットなどがあります。",rel:["cap"]},
+ {id:"cedar",w:"シダースピル",r:"しだーすぴる",cat:"道具",s:"点火に使う杉の薄い木片",e:"葉巻の点火に使う、スギの薄い木片です。箱に入っている仕切りの杉板を、細く裂いて使うこともあります。",rel:["foot","humidor"]},
+ {id:"muassel",w:"ムアッセル",r:"むあっせる",cat:"シーシャ",s:"シーシャ用の湿ったたばこ",e:"糖蜜やグリセリンで湿らせた、水たばこ(シーシャ)用のたばこです。フルーツやミントなどで香りづけされたものが主流です。",rel:["hmd"]},
+ {id:"hmd",w:"HMD",r:"えいちえむでぃー",cat:"シーシャ",s:"炭の熱を整える器具",e:"ヒートマネジメントデバイスの略で、ボウルにのせて炭の熱を均一に伝える器具です。アルミホイルの代わりに使え、穴をあける手間がいりません。",rel:["muassel"]},
+ {id:"lector",w:"レクトール",r:"れくとーる",cat:"歴史",s:"葉巻工場で朗読をする人",e:"葉巻工場で、作業する巻き手に新聞や小説を読み聞かせる朗読者です。朗読で人気だった小説から、モンテクリストの名が生まれたと言われています。",rel:["torcedor"]},
+ {id:"torcedor",w:"トルセドール",r:"とるせどーる",cat:"歴史",s:"葉巻を手で巻く職人",e:"葉巻を手で巻く職人のことです。キューバの工場では、レクトールの朗読を聞きながら巻く伝統が受け継がれてきました。",rel:["lector","wrapper"]},
+ {id:"senbai",w:"専売",r:"せんばい",cat:"歴史",s:"国がたばこを独占した制度",e:"国がたばこの製造や販売を独占した制度です。日本では1898年に葉たばこの専売、1904年に製造も含めた専売が始まりました。1985年に日本専売公社が民営化され、日本たばこ産業(JT)が発足しました。",rel:[]}
+];
+const GMAP=Object.fromEntries(GLOSSARY.map(t=>[t.id,t]));
+const GCATS=["葉巻","パイプ","キセル","葉","道具","シーシャ","歴史"];
+const KANAROWS=[["あ","あいうえおぁぃぅぇぉ"],["か","かきくけこがぎぐげご"],["さ","さしすせそざじずぜぞ"],["た","たちつてとだぢづでどっ"],["な","なにぬねの"],["は","はひふへほばびぶべぼぱぴぷぺぽ"],["ま","まみむめも"],["や","やゆよゃゅょ"],["ら","らりるれろ"],["わ","わをん"]];
+const kanaRow=r=>(KANAROWS.find(x=>x[1].includes(r[0]))||["他"])[0];
+const toHira=s=>s.replace(/[ァ-ヶ]/g,c=>String.fromCharCode(c.charCodeAt(0)-0x60));
+const byKana=(a,b)=>a.r.localeCompare(b.r,"ja");
+let unlocked=new Set((()=>{try{return JSON.parse(store.get("kemuri-gloss")||"[]")}catch(e){return []}})().filter(id=>GMAP[id]));
+let freshTerms=[]; // 今回のプレイで新しく解放された用語
+const gl={mode:"cat",cat:"葉巻",query:"",detail:null};
+function unlockFrom(q){
+  const text=[q.q,...(q.c||[]),q.e].join(" "), added=[];
+  GLOSSARY.forEach(t=>{if(!unlocked.has(t.id)&&text.includes(t.w)){unlocked.add(t.id);added.push(t.id)}});
+  if(added.length){freshTerms.push(...added);store.set("kemuri-gloss",JSON.stringify([...unlocked]))}
+  return added;
+}
+// 解放済みの用語に点線の下線をつけ、タップで小窓を開けるようにする
+function markup(text){
+  const list=GLOSSARY.filter(t=>unlocked.has(t.id)).sort((a,b)=>b.w.length-a.w.length);
+  const s=esc(text); if(!list.length)return s;
+  const ids=Object.fromEntries(list.map(t=>[esc(t.w),t.id]));
+  const re=new RegExp(list.map(t=>esc(t.w).replace(/[.*+?^${}()|[\]\\]/g,"\\$&")).join("|"),"g");
+  return s.replace(re,m=>`<button type="button" class="term" data-term="${ids[m]}">${m}</button>`);
+}
+function chipHTML(id,attr){const t=GMAP[id];return unlocked.has(id)?`<button type="button" class="chip" ${attr}="${id}">${esc(t.w)}</button>`:`<span class="chip locked">？？？</span>`}
+function detailHTML(t,attr){
+  return `<div class="gd"><span class="genre">${t.cat}</span>
+  <h3 class="gw" id="gtitle">${esc(t.w)}</h3><div class="gr">${esc(t.r)}</div>
+  <p class="gs">${esc(t.s)}</p><p class="ge">${esc(t.e)}</p>
+  ${t.rel.length?`<div class="grel"><span class="lbl">関連用語</span><div class="chips">${t.rel.map(id=>chipHTML(id,attr)).join("")}</div></div>`:""}</div>`;
+}
+function glossCount(){return GLOSSARY.filter(t=>unlocked.has(t.id)).length}
+function glossary(){gl.detail=null;renderGloss();window.scrollTo(0,0)}
+function renderGloss(){
+  app.className="card gloss";
+  if(gl.detail){
+    app.innerHTML=`<button type="button" class="back" id="gback">← 用語集の一覧へ</button>${detailHTML(GMAP[gl.detail],"data-gid")}`;
+    document.getElementById("gback").onclick=()=>{gl.detail=null;renderGloss()};
+    app.querySelectorAll("[data-gid]").forEach(b=>b.onclick=()=>{gl.detail=b.dataset.gid;renderGloss();window.scrollTo(0,0)});
+    return;
+  }
+  const n=glossCount();
+  app.innerHTML=`<button type="button" class="back" id="ghome">← はじめの画面へ</button>
+  <h2>用語集</h2>
+  <div class="gprog"><span>解放 <b>${n}</b> / ${GLOSSARY.length}</span><div class="ash"><i style="width:${n/GLOSSARY.length*100}%"></i></div></div>
+  <p class="ghint">クイズに出てきた言葉が、答えるたびにここへ加わっていきます。</p>
+  <input type="search" id="gq" class="gsearch" placeholder="解放済みの用語を探す(用語・よみがな)" value="${esc(gl.query)}" autocomplete="off" enterkeyhint="search">
+  <div class="seg"><button type="button" data-m="cat" aria-pressed="${gl.mode==="cat"}">カテゴリ</button><button type="button" data-m="kana" aria-pressed="${gl.mode==="kana"}">五十音</button></div>
+  <div id="gtabs"></div><div id="glist"></div>`;
+  document.getElementById("ghome").onclick=intro;
+  const q=document.getElementById("gq");q.oninput=()=>{gl.query=q.value;renderList()};
+  app.querySelectorAll(".seg button").forEach(b=>b.onclick=()=>{gl.mode=b.dataset.m;app.querySelectorAll(".seg button").forEach(x=>x.setAttribute("aria-pressed",x===b));renderList()});
+  renderList();
+}
+function itemHTML(t){
+  return unlocked.has(t.id)
+    ?`<li><button type="button" class="gi" data-gid="${t.id}"><span class="gw2">${esc(t.w)}</span><span class="gr2">${esc(t.r)}</span><span class="gs2">${esc(t.s)}</span></button></li>`
+    :`<li><div class="gi locked"><span class="gw2">？？？</span><span class="gr2">「${t.r[0]}」から始まる言葉 · ${t.cat}</span></div></li>`;
+}
+function renderList(){
+  const tabs=document.getElementById("gtabs"),box=document.getElementById("glist");
+  const qy=gl.query.trim();
+  if(qy){
+    tabs.innerHTML="";
+    const k=toHira(qy.toLowerCase());
+    const hits=GLOSSARY.filter(t=>unlocked.has(t.id)&&(t.w.toLowerCase().includes(qy.toLowerCase())||toHira(t.w).includes(k)||t.r.includes(k))).sort(byKana);
+    box.innerHTML=hits.length?`<ul class="glist">${hits.map(itemHTML).join("")}</ul>`:`<p class="gempty">解放済みの用語には見つかりませんでした。</p>`;
+  }else if(gl.mode==="cat"){
+    tabs.innerHTML=`<div class="tabs">${GCATS.map(c=>{const all=GLOSSARY.filter(t=>t.cat===c);return `<button type="button" class="tab" data-c="${c}" aria-pressed="${c===gl.cat}">${c}<small>${all.filter(t=>unlocked.has(t.id)).length}/${all.length}</small></button>`}).join("")}</div>`;
+    tabs.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{gl.cat=b.dataset.c;renderList()});
+    box.innerHTML=`<ul class="glist">${GLOSSARY.filter(t=>t.cat===gl.cat).sort(byKana).map(itemHTML).join("")}</ul>`;
+  }else{
+    tabs.innerHTML="";
+    const groups={};GLOSSARY.slice().sort(byKana).forEach(t=>{(groups[kanaRow(t.r)]=groups[kanaRow(t.r)]||[]).push(t)});
+    box.innerHTML=Object.keys(groups).map(g=>`<h3 class="grow">${g}行</h3><ul class="glist">${groups[g].map(itemHTML).join("")}</ul>`).join("");
+  }
+  box.querySelectorAll("[data-gid]").forEach(b=>b.onclick=()=>{gl.detail=b.dataset.gid;renderGloss();window.scrollTo(0,0)});
+}
+// クイズ画面などから開く小窓
+const modal=document.getElementById("modal"),mbody=document.getElementById("mbody");let mReturn=null;
+function openTerm(id){
+  if(!GMAP[id]||!unlocked.has(id))return;
+  if(modal.hidden)mReturn=document.activeElement;
+  mbody.innerHTML=detailHTML(GMAP[id],"data-term");
+  modal.hidden=false;document.documentElement.classList.add("lock");
+  document.getElementById("mclose").focus();
+}
+function closeTerm(){modal.hidden=true;document.documentElement.classList.remove("lock");if(mReturn&&mReturn.focus)mReturn.focus()}
+document.getElementById("mclose").onclick=closeTerm;
+modal.addEventListener("click",e=>{if(e.target===modal)closeTerm()});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!modal.hidden)closeTerm()});
+document.addEventListener("click",e=>{const b=e.target.closest("[data-term]");if(b){e.preventDefault();openTerm(b.dataset.term)}});
+
 function intro(){
   app.className="card intro";
-  app.innerHTML=`<h2>葉巻、パイプ、キセル。<br>あなたの紫煙通ぶりを試す10問。</h2>
-  <p>全${POOL.length}問。難易度を選ぶと、その中から毎回10問を出題します。まだ出ていない問題が優先され、4択と○×が混ざります。解説つき。</p>
-  <div class="diffs">${[1,2,3].map(d=>{const b=store.get("kemuri-best-"+d);return `<button class="dbtn" data-d="${d}"><span class="dl">${LV[d]}</span><span class="dn">${POOL.filter(q=>q.d===d).length}問</span><span class="dn">${b?`ベスト ${b}/${N}`:"未挑戦"}</span></button>`}).join("")}</div>`;
+  app.innerHTML=`<h2>グラスを片手に、<br>紫煙の教養をひとつずつ。</h2>
+  <p>葉巻、パイプ、キセル、そしてたばこの歴史。全${POOL.length}問の中から、今宵の10問をお出しします。まだお出ししていない問題から順に、4択と○×を織り交ぜて。一問ごとに短い解説を添えています。</p>
+  <div class="rule">今宵の一杯を選ぶ</div>
+  <div class="diffs">${[1,2,3].map(d=>{const b=store.get("kemuri-best-"+d);return `<button class="dbtn" data-d="${d}"><span class="dl">${LV[d]}</span><span class="ds">${LVSUB[d]}</span><span class="dn">${POOL.filter(q=>q.d===d).length}問 · ${b?`ベスト ${b}/${N}`:"未挑戦"}</span></button>`}).join("")}</div>
+  <button type="button" class="btn ghost gbtn" id="glbtn"><span>用語集</span><span class="gcount">解放 ${glossCount()} / ${GLOSSARY.length}</span></button>`;
   app.querySelectorAll(".dbtn").forEach(b=>b.onclick=()=>start(+b.dataset.d));
+  document.getElementById("glbtn").onclick=glossary;
 }
 let seenMem=null;
 function loadSeen(){if(seenMem)return seenMem;try{seenMem=JSON.parse(store.get("kemuri-seen")||"[]")}catch(e){seenMem=[]}return seenMem}
@@ -319,7 +580,7 @@ function start(d){
   seenMem=[...seen];store.set("kemuri-seen",JSON.stringify(seenMem));
   // 4択は毎回選択肢の並びをシャッフルする
   qs=qs.map(q=>{if(q.t!=="4")return q;const o=shuffle(q.c.map((c,n)=>({c,n})));return {...q,c:o.map(x=>x.c),a:o.findIndex(x=>x.n===q.a)}});
-  i=0;score=0;log=[];show();
+  i=0;score=0;log=[];freshTerms=[];show();
 }
 function show(){
   const q=qs[i], ox=q.t==="ox", opts=ox?["○","×"]:q.c;
@@ -337,8 +598,10 @@ function answer(k){
   app.querySelectorAll(".ch").forEach(b=>{const n=+b.dataset.k;b.disabled=true;
     if(n===q.a)b.classList.add("right");else if(n===k)b.classList.add("wrong");else b.classList.add("dim")});
   const fb=document.getElementById("fb");fb.className="fb "+(ok?"ok":"ng");
-  fb.innerHTML=`<strong>${ok?"正解":"不正解"}</strong><p>${esc(q.e)}</p>
-  <button class="btn" id="nx">${i+1<N?"次の問題":"結果を見る"}</button>`;
+  const added=unlockFrom(q);
+  fb.innerHTML=`<strong>${pick(ok?OKS:NGS)}</strong><span class="lbl">解説</span><p>${markup(q.e)}</p>
+  ${added.length?`<div class="newterm">用語集に加わりました:${added.map(id=>chipHTML(id,"data-term")).join("")}</div>`:""}
+  <button class="btn" id="nx">${i+1<N?"次の一問へ":"今宵の結果を見る"}</button>`;
   const nx=document.getElementById("nx");nx.focus();nx.onclick=()=>{i++;i<N?show():result()};
 }
 function lbl(q,n){return q.t==="ox"?(n?"×":"○"):esc(q.c[n])}
@@ -355,13 +618,79 @@ function result(){
   const r=RANKS.find(x=>score>=x.min);
   app.className="card result";
   app.innerHTML=`<div class="rank"><div class="score">${score}<small> / ${N}</small></div>
-  ${cigarSVG(score/N)}<div class="name">${r.name}級</div><div class="spec">${r.spec}</div>
+  ${cigarSVG(score/N)}<div class="name">${r.name}級</div><div class="spec">${r.spec}</div><p class="say">${r.say}</p>
   <div class="best">難易度「${LV[diff]}」の自己ベスト ${best} / ${N}</div></div>
+  <div class="fresh"><h2>今回新しく解放された用語</h2>
+  ${freshTerms.length?`<div class="chips">${freshTerms.map(id=>chipHTML(id,"data-term")).join("")}</div><p class="ghint">タップすると解説が開きます。用語集 解放 ${glossCount()} / ${GLOSSARY.length}</p>`:`<p class="ghint">今回は新しい用語はありませんでした。用語集 解放 ${glossCount()} / ${GLOSSARY.length}</p>`}</div>
   <h2>ふりかえり</h2>
   <ul class="review">${log.map(l=>`<li><span class="mk" style="color:${l.ok?"var(--ok)":"var(--ng)"}">${l.ok?"○":"×"}</span><span>${esc(l.q.q)}<br><span style="color:var(--muted)">${l.ok?"":`あなたの答え:${lbl(l.q,l.k)} / `}正解:${lbl(l.q,l.q.a)}</span></span></li>`).join("")}</ul>
   <div class="row"><button class="btn" id="re">もう一本</button><button class="btn ghost" id="top">難易度を選び直す</button></div>`;
   document.getElementById("re").onclick=()=>start();document.getElementById("top").onclick=intro;
 }
+/* ジャズBGM: Web Audioでその場で合成する。エレピのコンプ、ウォーキングベース、ブラシとライド、まばらなヴィブラフォン、レコードのノイズ */
+const Jazz=(()=>{
+  let ctx=null,master=null,noise=null,timer=null,bar=0,nextT=0,playing=false;
+  const BPM=78, BEAT=60/BPM, SW=2/3;
+  // [ベースのルート, エレピのボイシング, マイナーか]  F調の8小節ループ
+  const PROG=[[41,[57,60,64,67],0],[38,[54,60,64,69],0],[43,[58,62,65,69],1],[36,[58,64,69,74],0],
+              [45,[55,60,64,67],1],[38,[54,57,60,64],0],[43,[53,58,62,65],1],[36,[52,58,62,69],0]];
+  const hz=m=>440*Math.pow(2,(m-69)/12);
+  function env(g,t,a,peak,dec){g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(peak,t+a);g.gain.exponentialRampToValueAtTime(0.0001,t+a+dec)}
+  function tone(type,f,t,a,peak,dec,dest){const o=ctx.createOscillator(),g=ctx.createGain();o.type=type;o.frequency.value=f;env(g,t,a,peak,dec);o.connect(g);g.connect(dest||master);o.start(t);o.stop(t+a+dec+0.05)}
+  function ep(m,t,dur,v){tone("sine",hz(m),t,0.01,v,dur);tone("sine",hz(m)*2,t,0.005,v*0.16,dur*0.5);tone("triangle",hz(m)*3.01,t,0.003,v*0.04,0.25)}
+  function bass(m,t,dur){const f=ctx.createBiquadFilter();f.type="lowpass";f.frequency.value=650;f.connect(master);tone("triangle",hz(m),t,0.012,0.42,dur,f);tone("sine",hz(m),t,0.01,0.25,dur*0.8,f)}
+  function hit(t,type,freq,q,v,dur){const s=ctx.createBufferSource(),f=ctx.createBiquadFilter(),g=ctx.createGain();s.buffer=noise;f.type=type;f.frequency.value=freq;f.Q.value=q;env(g,t,0.004,v,dur);s.connect(f);f.connect(g);g.connect(master);s.start(t,Math.random()*0.8);s.stop(t+dur+0.05)}
+  function vib(m,t){tone("sine",hz(m),t,0.006,0.09,1.6);tone("sine",hz(m)*4,t,0.003,0.012,0.3)}
+  function init(){
+    const AC=window.AudioContext||window.webkitAudioContext; if(!AC) return false;
+    ctx=new AC();
+    const lp=ctx.createBiquadFilter();lp.type="lowpass";lp.frequency.value=4800;lp.connect(ctx.destination);
+    master=ctx.createGain();master.gain.value=0;master.connect(lp);
+    noise=ctx.createBuffer(1,ctx.sampleRate,ctx.sampleRate);const d=noise.getChannelData(0);for(let k=0;k<d.length;k++)d[k]=Math.random()*2-1;
+    const cb=ctx.createBuffer(1,ctx.sampleRate*4,ctx.sampleRate),c=cb.getChannelData(0);
+    for(let k=0;k<c.length;k++)c[k]=Math.random()<0.0003?(Math.random()*2-1)*0.5:(Math.random()*2-1)*0.003;
+    const cr=ctx.createBufferSource(),cg=ctx.createGain();cr.buffer=cb;cr.loop=true;cg.gain.value=0.4;cr.connect(cg);cg.connect(master);cr.start();
+    return true;
+  }
+  function scheduleBar(t,b){
+    const [r,v,minor]=PROG[b%8], nr=PROG[(b+1)%8][0];
+    const walk=[r,r+(minor?3:4),r+7,nr+(Math.random()<0.5?1:-1)];
+    if(Math.random()<0.3)walk[2]=r+(minor?3:4)+2;
+    walk.forEach((m,q)=>bass(m,t+q*BEAT,BEAT*0.95));
+    v.forEach(m=>ep(m,t,1.4,0.045));
+    v.forEach(m=>ep(m,t+BEAT*(1+SW),0.6,0.035));
+    if(Math.random()<0.4)v.forEach(m=>ep(m,t+BEAT*(2+SW),0.5,0.028));
+    for(let q=0;q<4;q++){
+      hit(t+q*BEAT,"highpass",7500,0.7,0.035,0.28);
+      if(q===1||q===3){hit(t+(q+SW)*BEAT,"highpass",7500,0.7,0.022,0.16);hit(t+q*BEAT,"bandpass",2200,0.6,0.05,0.2)}
+    }
+    tone("sine",62,t,0.005,0.18,0.25);
+    for(let e=0;e<8;e++){
+      if(Math.random()<0.2){const m=v[Math.floor(Math.random()*v.length)];vib(m+12>81?m:m+12,t+Math.floor(e/2)*BEAT+(e%2?BEAT*SW:0))}
+    }
+  }
+  function tick(){while(nextT<ctx.currentTime+1.5){scheduleBar(nextT,bar);nextT+=4*BEAT;bar++}}
+  return {
+    get on(){return playing},
+    start(){
+      if(!ctx&&!init())return false;
+      if(ctx.resume)ctx.resume();
+      nextT=ctx.currentTime+0.15;bar=0;tick();timer=setInterval(tick,200);
+      master.gain.cancelScheduledValues(ctx.currentTime);master.gain.setTargetAtTime(0.32,ctx.currentTime,0.8);
+      playing=true;return true;
+    },
+    stop(){
+      if(!ctx)return;playing=false;clearInterval(timer);
+      master.gain.cancelScheduledValues(ctx.currentTime);master.gain.setTargetAtTime(0,ctx.currentTime,0.3);
+      setTimeout(()=>{if(!playing&&ctx.suspend)ctx.suspend()},1500);
+    }
+  };
+})();
+const bgmBtn=document.getElementById("bgm"),bgmLbl=document.getElementById("bgmlbl");
+bgmBtn.onclick=()=>{
+  if(Jazz.on){Jazz.stop()}else if(!Jazz.start()){bgmLbl.textContent="この端末ではBGMを再生できません";return}
+  bgmBtn.setAttribute("aria-pressed",Jazz.on);bgmLbl.textContent=Jazz.on?"ジャズ BGM オン":"ジャズ BGM オフ";
+};
 intro();
 </script>
 </body>
